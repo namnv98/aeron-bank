@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe"
+                   package="com.weareadaptive.sbe"
+                   id="688"
+                   version="1"
+                   semanticVersion="0.1"
+                   description="SBE Messages for our FX Service">
+    <types>
+        <type name="fromId" primitiveType="uint64"/>
+        <type name="toId" primitiveType="double"/>
+        <type name="amount" primitiveType="double"/>
+        <type name="status" primitiveType="uint8"/>
+
+        <composite name="messageHeader" description="Service name, method name, and correlation ID">
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+            <type name="correlationId" primitiveType="uint64"/>
+        </composite>
+    </types>
+
+    <!--Requests-->
+    <sbe:message name="transferRequest" id="1">
+        <field name="fromId" id="1" type="fromId"/>
+        <field name="toId" id="2" type="toId"/>
+        <field name="amount" id="3" type="amount"/>
+    </sbe:message>
+
+    <!--Responses-->
+    <sbe:message name="executionResult" id="2">
+        <field name="status" id="1" type="status"/>
+    </sbe:message>
+
+    <sbe:message name="successMessage" id="3">
+        <field name="status" id="1" type="status"/>
+    </sbe:message>
+
+    <sbe:message name="transferResponse" id="4">
+        <field name="status" id="1" type="status"/>
+    </sbe:message>
+
+</sbe:messageSchema>
