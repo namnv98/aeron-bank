@@ -2,7 +2,7 @@ package com.namnv;
 
 import com.namnv.services.infra.ClusterClientResponder;
 import com.namnv.services.infra.ClusterClientResponderImpl;
-import com.namnv.services.oms.OMSService;
+import com.namnv.services.bank.OMSService;
 import com.weareadaptive.sbe.MessageHeaderDecoder;
 import io.aeron.ExclusivePublication;
 import io.aeron.Image;

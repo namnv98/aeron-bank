@@ -1,8 +1,8 @@
-package com.namnv.services.oms;
+package com.namnv.services.bank;
 
 
-import com.namnv.services.oms.util.ExecutionResult;
-import com.namnv.services.oms.util.Status;
+import com.namnv.services.bank.util.ExecutionResult;
+import com.namnv.services.bank.util.Status;
 
 public class BankServiceImpl implements IBankService {
 

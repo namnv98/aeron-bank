@@ -1,7 +1,7 @@
 package com.namnv.services.infra;
 
-import com.namnv.services.oms.util.ExecutionResult;
-import com.namnv.services.oms.util.Status;
+import com.namnv.services.bank.util.ExecutionResult;
+import com.namnv.services.bank.util.Status;
 import com.weareadaptive.sbe.ExecutionResultEncoder;
 import com.weareadaptive.sbe.MessageHeaderEncoder;
 import com.weareadaptive.sbe.SuccessMessageEncoder;

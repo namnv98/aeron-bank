@@ -1,6 +1,6 @@
 package com.namnv.client;
 
-import com.namnv.services.oms.util.Method;
+import com.namnv.services.bank.util.Method;
 import com.weareadaptive.sbe.MessageHeaderEncoder;
 import com.weareadaptive.sbe.TransferRequestEncoder;
 import org.agrona.MutableDirectBuffer;

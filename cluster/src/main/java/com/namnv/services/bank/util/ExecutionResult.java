@@ -1,4 +1,4 @@
-package com.namnv.services.oms.util;
+package com.namnv.services.bank.util;
 
 public class ExecutionResult {
     long orderId;

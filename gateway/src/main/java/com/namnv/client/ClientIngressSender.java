@@ -1,6 +1,6 @@
 package com.namnv.client;
 
-import com.namnv.services.oms.util.Method;
+import com.namnv.services.bank.util.Method;
 import io.aeron.Publication;
 import io.aeron.cluster.client.AeronCluster;
 import org.agrona.DirectBuffer;
