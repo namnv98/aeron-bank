@@ -1,0 +1,7 @@
+FROM openjdk:17-oracle
+
+COPY gateway/dist/gateway /gateway
+
+WORKDIR /gateway
+
+CMD ./start-gateway.sh

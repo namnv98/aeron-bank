@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  node0:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    shm_size: 1g
+    volumes:
+      - Aeron:/app
+    container_name: node0
+    environment:
+      - CLUSTER_ADDRESSES=172.20.0.2
+      - CLUSTER_NODE=0
+      - EGRESS_CHANNEL=aeron:udp?endpoint=172.20.0.5:0
+    networks:
+      internal_bus:
+        ipv4_address: 172.20.0.2
+
+#  node1:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.node
+#    shm_size: 1g
+#    volumes:
+#      - Aeron:/app
+#    container_name: node1
+#    environment:
+#      - CLUSTER_ADDRESSES=172.20.0.2,172.20.0.3
+#      - CLUSTER_NODE=1
+#      - EGRESS_CHANNEL=aeron:udp?endpoint=172.20.0.5:0
+#    networks:
+#      internal_bus:
+#        ipv4_address: 172.20.0.3
+
+  client1:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    shm_size: 1g
+    volumes:
+      - Aeron:/app
+#    ports:
+#      - "8080:8080/tcp"
+#      - "8080:8080/udp"
+    container_name: client1
+    environment:
+      - CLUSTER_ADDRESSES=172.20.0.2
+      - EGRESS_CHANNEL=aeron:udp?endpoint=172.20.0.5:0
+    networks:
+      internal_bus:
+        ipv4_address: 172.20.0.5
+
+  client2:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    shm_size: 1g
+    volumes:
+      - Aeron:/app
+#    ports:
+#      - "8080:8080/tcp"
+#      - "8080:8080/udp"
+    container_name: client2
+    environment:
+      - CLUSTER_ADDRESSES=172.20.0.2
+      - EGRESS_CHANNEL=aeron:udp?endpoint=172.20.0.6:0
+    networks:
+      internal_bus:
+        ipv4_address: 172.20.0.6
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_loadbalancer
+    ports:
+      - "8080:8080"  # Exposing port 8080 to access the load-balanced clients
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - internal_bus
+    depends_on:
+      - client1
+      - client2
+
+volumes:
+  Aeron:
+
+networks:
+  internal_bus:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_icc: 'true'
+      com.docker.network.driver.mtu: 9000
+      com.docker.network.enable_ipv6: 'false'
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.20.0.0/24"

@@ -27,7 +27,7 @@ public class GatewayAgent implements Agent {
     private int initLeader = -1;
     private long lastHeartbeatTime = Long.MIN_VALUE;
     //TODO:
-    private static final long HEARTBEAT_INTERVAL = 250000;
+    private static final long HEARTBEAT_INTERVAL = 2500000;
     private static boolean isActive;
 
 

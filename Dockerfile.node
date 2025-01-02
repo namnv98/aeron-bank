@@ -1,0 +1,7 @@
+FROM openjdk:17-oracle
+
+COPY cluster/dist/cluster /cluster
+
+WORKDIR /cluster
+
+CMD ./start-cluster.sh

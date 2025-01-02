@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- Console appender that outputs to console -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Root logger configuration -->
+  <root level="info">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+  <!-- Logger configuration for a specific package or class -->
+  <logger name="com.namnv" level="debug">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+
+</configuration>
