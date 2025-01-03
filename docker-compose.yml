@@ -50,6 +50,8 @@ services:
     networks:
       internal_bus:
         ipv4_address: 172.20.0.5
+    depends_on:
+      - node0
 
   client2:
     build:
@@ -68,6 +70,8 @@ services:
     networks:
       internal_bus:
         ipv4_address: 172.20.0.6
+    depends_on:
+      - node0
 
   nginx:
     image: nginx:alpine

@@ -47,10 +47,4 @@ public class ClientIngressSender {
         LOGGER.info("OrderRequest is being sent to cluster");
         sendMessageToCluster(encoder.encodeOrderRequest(correlationId, fromId, todId, amount), encoder.ORDER_REQUEST_LENGTH);
     }
-
-
-    public void sendHeaderMessageToCluster(long correlationId, Method method) {
-        LOGGER.info("HeaderMessage is being sent to cluster");
-        sendMessageToCluster(encoder.encodeHeaderMessage(correlationId, method), encoder.HEADER_LENGTH);
-    }
 }
