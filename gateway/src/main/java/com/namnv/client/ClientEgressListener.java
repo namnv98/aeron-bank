@@ -27,28 +27,10 @@ public class ClientEgressListener implements EgressListener {
     public void onMessage(final long clusterSessionId, final long timestamp, final DirectBuffer buffer,
                           final int offset, final int length,
                           final Header header) {
-        LOGGER.info("Received message");
-        int bufferOffset = offset;
-        messageHeaderDecoder.wrap(buffer, bufferOffset);
-        final int typeOfMessage = messageHeaderDecoder.templateId();
-        final long correlationId = messageHeaderDecoder.correlationId();
-
-        if (allHttopRequest.containsKey(correlationId)) {
-            final int actingBlockLength = messageHeaderDecoder.blockLength();
-            final int actingVersion = messageHeaderDecoder.version();
-            bufferOffset += messageHeaderDecoder.encodedLength();
-
-            if (typeOfMessage == TransferResponseDecoder.TEMPLATE_ID) {
-                //TODO:
-//                binaryJsonCodec.addOrderToCollectionOfAllOrders(correlationId, buffer, bufferOffset, actingBlockLength, actingVersion);
-                sendMessage(buffer, bufferOffset, typeOfMessage, correlationId, actingBlockLength, actingVersion);
-
-            } else {
-                sendMessage(buffer, bufferOffset, typeOfMessage, correlationId, actingBlockLength, actingVersion);
-            }
-        } else {
-            LOGGER.error("This ID is not in use: ".concat(String.valueOf(correlationId)));
-        }
+      long correlationId = buffer.getLong(offset);
+      System.out.println(correlationId);
+      allHttopRequest.get(correlationId).response().end("123");
+      allHttopRequest.remove(correlationId);
     }
 
     private void sendMessage(final DirectBuffer buffer, final int bufferOffset, final int typeOfMessage, final long correlationId,

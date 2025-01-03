@@ -11,7 +11,11 @@ import io.aeron.cluster.service.ClientSession;
 import io.aeron.cluster.service.Cluster;
 import io.aeron.cluster.service.ClusteredService;
 import io.aeron.logbuffer.Header;
+import org.agrona.BitUtil;
 import org.agrona.DirectBuffer;
+import org.agrona.ExpandableArrayBuffer;
+import org.agrona.MutableDirectBuffer;
+import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,26 +47,20 @@ public class ClusterService implements ClusteredService {
     public void onSessionClose(final ClientSession session, final long timestamp, final CloseReason closeReason) {
         LOGGER.info("Client ID: " + session.id() + " Disconnected");
     }
-
+  private final MutableDirectBuffer egressMessageBuffer = new ExpandableArrayBuffer();
+  private final IdleStrategy idleStrategy = new BackoffIdleStrategy();
     @Override
     public void onSessionMessage(final ClientSession session, final long timestamp, final DirectBuffer buffer,
                                  final int offset, final int length,
                                  final Header header) {
-        int bufferOffset = offset;
-        headerDecoder.wrap(buffer, bufferOffset);
+      long correlationId = buffer.getLong(offset);
 
-        final int schemaId = headerDecoder.schemaId();
-        final int templateId = headerDecoder.templateId();
-        final int actingBlockLength = headerDecoder.blockLength();
-        final int actingVersion = headerDecoder.version();
+      egressMessageBuffer.putLong(0, correlationId);
 
-        bufferOffset += headerDecoder.encodedLength();
-        final var correlationId = headerDecoder.correlationId();
-        if (schemaId == MessageHeaderDecoder.SCHEMA_ID) {
-            omsService.messageHandler(session, correlationId, templateId, buffer, bufferOffset, actingBlockLength, actingVersion);
-        } else {
-            LOGGER.error("Bad service name");
-        }
+      idleStrategy.reset();
+      while (session.offer(egressMessageBuffer, 0, BitUtil.SIZE_OF_LONG) < 0) {
+        idleStrategy.idle();
+      }
     }
 
     @Override
