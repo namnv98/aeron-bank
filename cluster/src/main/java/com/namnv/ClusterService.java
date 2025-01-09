@@ -6,6 +6,7 @@ import com.namnv.services.bank.OMSService;
 import com.weareadaptive.sbe.MessageHeaderDecoder;
 import io.aeron.ExclusivePublication;
 import io.aeron.Image;
+import io.aeron.Publication;
 import io.aeron.cluster.codecs.CloseReason;
 import io.aeron.cluster.service.ClientSession;
 import io.aeron.cluster.service.Cluster;
@@ -51,16 +52,32 @@ public class ClusterService implements ClusteredService {
   private final IdleStrategy idleStrategy = new BackoffIdleStrategy();
     @Override
     public void onSessionMessage(final ClientSession session, final long timestamp, final DirectBuffer buffer,
-                                 final int offset, final int length,
+                                 final int offset1, final int length,
                                  final Header header) {
-      long correlationId = buffer.getLong(offset);
+      long correlationId = buffer.getLong(offset1);
+      System.out.println(correlationId);
 
-      egressMessageBuffer.putLong(0, correlationId);
+      int offset = 0;
+      egressMessageBuffer.putLong(offset, correlationId);
+      offset += BitUtil.SIZE_OF_LONG;
 
-      idleStrategy.reset();
-      while (session.offer(egressMessageBuffer, 0, BitUtil.SIZE_OF_LONG) < 0) {
+      int retries = 0;
+      do {
+        final long result = session.offer(egressMessageBuffer, 0, offset);
+        if (result > 0L) {
+          return;
+        } else if (result == Publication.ADMIN_ACTION || result == Publication.BACK_PRESSURED) {
+          System.out.println("backpressure or admin action on cluster offer");
+        } else if (result == Publication.NOT_CONNECTED || result == Publication.MAX_POSITION_EXCEEDED) {
+          System.out.println("Cluster is not connected, or maximum position has been exceeded. Message lost.");
+          return;
+        }
+
         idleStrategy.idle();
+        retries += 1;
+        System.out.println("failed to send message to cluster. Retrying (" + retries + " of " + 3 + ")");
       }
+      while (retries < 3);
     }
 
     @Override

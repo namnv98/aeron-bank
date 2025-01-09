@@ -36,7 +36,6 @@ public class HttpServer extends AbstractVerticle {
 
 
   private void transfer(HttpServerRequest httpServerRequest, long correlationId) {
-    System.out.println("add http");
     clientEgressListener.addHttpRequest(correlationId, httpServerRequest);
     clientIngressSender.sendOrderRequestToCluster(correlationId, 1, 1, 1);
   }

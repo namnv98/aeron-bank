@@ -2,6 +2,7 @@ package com.namnv;
 
 import com.namnv.client.ClientEgressListener;
 import com.namnv.client.ClientIngressSender;
+import io.aeron.CommonContext;
 import io.aeron.cluster.client.AeronCluster;
 import io.aeron.driver.MediaDriver;
 import io.aeron.driver.ThreadingMode;
@@ -11,6 +12,7 @@ import org.agrona.concurrent.SystemEpochClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import static com.namnv.util.ConfigUtils.egressChannel;
@@ -45,6 +47,13 @@ public class GatewayAgent implements Agent {
   }
 
   public void startGateway(final int maxNodes) {
+
+    final File baseDir =
+      new File(System.getProperty("user.dir") + "/client");
+
+
+    System.setProperty("aeron.dir", baseDir.getPath());
+
     LOGGER.info("Starting com.namnv.Gateway...");
     clientEgressListener = new ClientEgressListener();
 

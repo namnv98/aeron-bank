@@ -51,29 +51,31 @@ public class ClientIngressSender {
 
   private final MutableDirectBuffer actionBidBuffer = new ExpandableArrayBuffer();
   private final IdleStrategy idleStrategy = new BackoffIdleStrategy();
+  private static final long RETRY_COUNT = 10;
 
   public void sendOrderRequestToCluster(long correlationId, final long fromId, final long todId, final double amount) {
-      int offset = 0;
-      actionBidBuffer.putLong(offset, correlationId);
-      offset += BitUtil.SIZE_OF_LONG;
+    int offset = 0;
+    actionBidBuffer.putLong(offset, correlationId);
+    offset += BitUtil.SIZE_OF_LONG;
 
-      actionBidBuffer.putLong(offset, 1);
-      offset += BitUtil.SIZE_OF_LONG;
-
-      byte[] fullName = "nguyen van nam".getBytes(StandardCharsets.UTF_8);
-      actionBidBuffer.putInt(offset, fullName.length);
-      offset += BitUtil.SIZE_OF_INT;
-
-      actionBidBuffer.putBytes(offset, fullName);
-      offset += fullName.length;
-
-      idleStrategy.reset();
-      while (aeronCluster.offer(actionBidBuffer, 0, offset) < 0) {
-        idleStrategy.idle(aeronCluster.pollEgress());
+    int retries = 0;
+    do {
+      final long result = aeronCluster.offer(actionBidBuffer, 0, offset);
+      if (result > 0L) {
+        return;
+      } else if (result == Publication.ADMIN_ACTION || result == Publication.BACK_PRESSURED) {
+        System.out.println("backpressure or admin action on cluster offer");
+      } else if (result == Publication.NOT_CONNECTED || result == Publication.MAX_POSITION_EXCEEDED) {
+        System.out.println("Cluster is not connected, or maximum position has been exceeded. Message lost.");
+        return;
       }
-      LOGGER.info("OrderRequest is being sent to cluster " + ++correlationId);
 
-//        sendMessageToCluster(encoder.encodeOrderRequest(correlationId, fromId, todId, amount), encoder.ORDER_REQUEST_LENGTH);
+      idleStrategy.idle();
+      retries += 1;
+      System.out.println("failed to send message to cluster. Retrying (" + retries + " of " + RETRY_COUNT + ")");
+    }
+    while (retries < RETRY_COUNT);
+
 
   }
 }
