@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe"
+                   package="com.weareadaptive.sbe.snapshotting"
+                   id="900"
+                   version="1"
+                   semanticVersion="0.1"
+                   description="SBE Messages for Snapshotting Service">
+    <types>
+        <type name="id" primitiveType="uint64"/>
+        <type name="amount" primitiveType="uint64"/>
+        <type name="precision" primitiveType="uint64"/>
+        <composite name="messageHeader" description="Service name, method name, and correlation ID">
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+    </types>
+    <sbe:message name="balanceSnapshot" id="1">
+        <field name="id" id="1" type="id"/>
+        <field name="amount" id="2" type="amount"/>
+        <field name="precision" id="3" type="precision"/>
+    </sbe:message>
+    <sbe:message name="endOfSnapshot" id="4"/>
+</sbe:messageSchema>

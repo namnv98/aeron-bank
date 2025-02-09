@@ -27,12 +27,11 @@ public class ClientEgressListener implements EgressListener {
     public void onMessage(final long clusterSessionId, final long timestamp, final DirectBuffer buffer,
                           final int offset, final int length,
                           final Header header) {
-        LOGGER.info("Received message");
         int bufferOffset = offset;
         messageHeaderDecoder.wrap(buffer, bufferOffset);
         final int typeOfMessage = messageHeaderDecoder.templateId();
         final long correlationId = messageHeaderDecoder.correlationId();
-
+        LOGGER.info(String.valueOf(correlationId));
         if (allHttopRequest.containsKey(correlationId)) {
             final int actingBlockLength = messageHeaderDecoder.blockLength();
             final int actingVersion = messageHeaderDecoder.version();
@@ -62,8 +61,6 @@ public class ClientEgressListener implements EgressListener {
                     binaryJsonCodec.getOrderIdResponse(buffer, bufferOffset, actingBlockLength, actingVersion);
             default -> throw new RuntimeException("method not supported");
         };
-
-        LOGGER.info("Sending message with correlation ID ".concat(String.valueOf(correlationId)));
         allHttopRequest.get(correlationId).response().end(jsonObject.toBuffer());
         allHttopRequest.remove(correlationId);
     }

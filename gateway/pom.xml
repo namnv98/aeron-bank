@@ -16,7 +16,12 @@
 
   </properties>
 
-  <dependencies> <!-- Logback Classic (SLF4J binding) -->
+  <dependencies>
+    <dependency>
+      <groupId>com.lmax</groupId>
+      <artifactId>disruptor</artifactId>
+      <version>3.3.5</version>
+    </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -33,12 +38,12 @@
     <dependency>
       <groupId>io.aeron</groupId>
       <artifactId>aeron-all</artifactId>
-      <version>1.41.3</version>
+      <version>1.47.0</version>
     </dependency>
     <dependency>
       <groupId>io.aeron</groupId>
       <artifactId>aeron-test-support</artifactId>
-      <version>1.41.2</version>
+      <version>1.47.0</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -105,12 +110,7 @@
       <version>5.9.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.namnv</groupId>
-      <artifactId>cluster</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
-    </dependency>
+
   </dependencies>
 
   <build>

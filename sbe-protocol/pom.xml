@@ -66,6 +66,8 @@
                             <mainClass>uk.co.real_logic.sbe.SbeTool</mainClass>
                             <arguments>
                                 <argument>src/main/resources/oms_messages.xml</argument>
+                                <argument>src/main/resources/snapshotting_messages.xml</argument>
+
                             </arguments>
                             <systemProperties>
                                 <property>

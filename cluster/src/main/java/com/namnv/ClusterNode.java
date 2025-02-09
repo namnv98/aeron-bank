@@ -1,11 +1,17 @@
 package com.namnv;
 
-import io.aeron.CommonContext;
-import io.aeron.cluster.ClusteredMediaDriver;
+import io.aeron.archive.Archive;
+import io.aeron.cluster.ConsensusModule;
 import io.aeron.cluster.service.ClusteredServiceContainer;
+import io.aeron.driver.MediaDriver;
+import io.aeron.driver.status.SystemCounterDescriptor;
 import io.aeron.samples.cluster.ClusterConfig;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
 import org.agrona.CloseHelper;
+import org.agrona.ErrorHandler;
 import org.agrona.concurrent.ShutdownSignalBarrier;
+import org.agrona.concurrent.status.AtomicCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,120 +20,142 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.namnv.util.ConfigUtils.*;
+import static io.aeron.cluster.ConsensusModule.Configuration.LOG_CHANNEL_PROP_NAME;
 import static io.aeron.driver.ThreadingMode.DEDICATED;
+import static java.lang.System.setProperty;
 
-
+@Setter
+@AllArgsConstructor
 public class ClusterNode implements AutoCloseable {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClusterNode.class);
 
-  ClusteredServiceContainer clusteredServiceContainer;
-  ClusteredMediaDriver clusteredMediaDriver;
-  ClusterService clusterService = new ClusterService();
-  File clusterDir;
-  boolean active = false;
+  private ClusteredServiceContainer clusteredServiceContainer;
+  private ClusteredMediaDriver clusteredMediaDriver;
+  private ClusterService clusterService;
 
-  ShutdownSignalBarrier barrier = new ShutdownSignalBarrier();
+  public ClusterNode(ClusterService clusterService) {
+    this.clusterService = clusterService;
+  }
 
-  public void startNode(final int node, final int maxNodes, final boolean test) {
-    LOGGER.info("Starting Cluster Node...");
-    barrier = new ShutdownSignalBarrier();
-
+  public void startNode(int node, int maxNodes, long initLogPosition) {
 
     final int portBase = getBasePort();
-    final String hosts = maxNodes == 1 ? getClusterAddresses() : getMultiNodeClusterAddresses(maxNodes);
-
-    //This may need tuning for your environment.
-    final File baseDir =
-      new File(System.getProperty("user.dir") + "/oms-aeron/complete" + "/aeronCluster/", "node" + node);
-    final String aeronDirName = CommonContext.getAeronDirectoryName() + "-" + node + "-driver";
-
-    LOGGER.info("Base Dir: " + baseDir);
-    LOGGER.info("Aeron Dir: " + aeronDirName);
-
+    final String hosts =
+        maxNodes == 1 ? getClusterAddresses() : getMultiNodeClusterAddresses(maxNodes);
     final List<String> hostAddresses = List.of(hosts.split(","));
-    final ClusterConfig clusterConfig = ClusterConfig.create(
-      node,
-      hostAddresses,
-      hostAddresses,
-      portBase,
-      clusterService
-    );
-    clusterDir = new File(baseDir, "cluster");
 
-    clusterConfig.clusteredServiceContext().clusterDir(clusterDir);
+    var barrier = new ShutdownSignalBarrier();
 
-    clusterConfig.archiveContext().archiveDir(new File(baseDir, "archive"));
-    clusterConfig.archiveContext().aeronDirectoryName(aeronDirName);
-    clusterConfig.archiveContext().errorHandler(throwable -> {
-      throwable.printStackTrace();
-    });
+    var dirBase = System.getProperty("user.dir") + "/aeron-cluster/node-" + node + "/";
+    setProperty("aeron.dir", dirBase);
 
-    clusterConfig.aeronArchiveContext().aeronDirectoryName(aeronDirName);
-    clusterConfig.aeronArchiveContext().errorHandler(throwable -> {
-      throwable.printStackTrace();
-    });
+    var baseDir = new File(dirBase);
 
-    clusterConfig.consensusModuleContext().ingressChannel("aeron:udp");
-    clusterConfig.consensusModuleContext().clusterDir(clusterDir);
-    clusterConfig.consensusModuleContext().deleteDirOnStart(test);
-    clusterConfig.consensusModuleContext().sessionTimeoutNs(TimeUnit.SECONDS.toNanos(500));
-    clusterConfig.consensusModuleContext().egressChannel(egressChannel());
-    clusterConfig.consensusModuleContext().leaderHeartbeatTimeoutNs(TimeUnit.SECONDS.toNanos(1));
-    clusterConfig.consensusModuleContext().errorHandler(throwable -> {
-      throwable.printStackTrace();
-    });
+    var clusterConfig =
+        createClusterConfig(node, baseDir, portBase, hostAddresses, initLogPosition);
 
-    clusterConfig.mediaDriverContext().aeronDirectoryName(aeronDirName);
-    clusterConfig.mediaDriverContext().threadingMode(DEDICATED);
-    clusterConfig.mediaDriverContext().errorHandler(throwable -> {
-      throwable.printStackTrace();
-    });
+    try (ClusteredMediaDriver clusteredMediaDriver =
+            launch(clusterConfig, clusterConfig.archiveContext());
+        ClusteredServiceContainer clusteredServiceContainer =
+            ClusteredServiceContainer.launch(clusterConfig.clusteredServiceContext())) {
 
-    awaitDnsResolution(hostAddresses, node);
-
-    try (
-      ClusteredMediaDriver clusteredMediaDriver = ClusteredMediaDriver.launch(
-        clusterConfig.mediaDriverContext(),
-        clusterConfig.archiveContext(),
-        clusterConfig.consensusModuleContext());
-      ClusteredServiceContainer clusteredServiceContainer = ClusteredServiceContainer.launch(
-        clusterConfig.clusteredServiceContext())) {
       this.clusteredServiceContainer = clusteredServiceContainer;
       this.clusteredMediaDriver = clusteredMediaDriver;
       LOGGER.info("Started Cluster Node...");
-      setActive(true);
 
       barrier.await();
 
       close();
       LOGGER.info("Exiting");
+    } catch (Exception e) {
+      LOGGER.error("Error during node startup", e);
     }
   }
 
-  public boolean isActive() {
-    return this.active;
+  private ClusterConfig createClusterConfig(
+      int node, File baseDir, int portBase, List<String> hostAddresses, long initLogPosition) {
+    var clusterConfig =
+        ClusterConfig.create(node, hostAddresses, hostAddresses, portBase, clusterService);
+    var clusterDir = new File(baseDir, "cluster");
+
+    clusterConfig
+        .consensusModuleContext()
+        .ingressChannel("aeron:udp")
+        //            .egressChannel(egressChannel())
+        .logStreamId(100)
+        .deleteDirOnStart(false)
+        .sessionTimeoutNs(TimeUnit.MINUTES.toNanos(10))
+        .leaderHeartbeatTimeoutNs(TimeUnit.SECONDS.toNanos(1))
+        .initLogPosition(initLogPosition)
+        .clusterDir(clusterDir);
+
+    clusterConfig
+        .archiveContext()
+        .archiveDir(new File(baseDir, "archive"))
+        .controlChannel("aeron:udp?endpoint=127.0.0.1:8001")
+        .localControlChannel("aeron:ipc")
+        .recordingEventsChannel("aeron:udp?endpoint=127.0.0.1:8002")
+        .recordingEventsStreamId(1009)
+        .replicationChannel("aeron:udp?endpoint=127.0.0.1:8006")
+        .segmentFileLength(16 * 1024 * 1024)
+        .recordingEventsEnabled(true);
+
+    clusterConfig.mediaDriverContext().threadingMode(DEDICATED);
+    clusterConfig.clusteredServiceContext().clusterDir(clusterDir);
+
+    return clusterConfig;
   }
 
-  public void setActive(final boolean active) {
-    this.active = active;
+  private ClusteredMediaDriver launch(ClusterConfig clusterConfig, Archive.Context archiveContext) {
+    MediaDriver.Context driverCtx = clusterConfig.mediaDriverContext();
+    Archive archive = null;
+    ConsensusModule consensusModule = null;
+    MediaDriver driver = null;
+
+    try {
+      driver = MediaDriver.launch(driverCtx);
+      var errorCounter = createErrorCounter(archiveContext, driverCtx);
+      var errorHandler = driverCtx.errorHandler();
+
+      archive =
+          Archive.launch(
+              archiveContext
+                  .mediaDriverAgentInvoker(driver.sharedAgentInvoker())
+                  .aeronDirectoryName(driver.aeronDirectoryName())
+                  .errorHandler(errorHandler)
+                  .errorCounter(errorCounter));
+
+      consensusModule =
+          ConsensusModule.launch(
+              clusterConfig
+                  .consensusModuleContext()
+                  .aeronDirectoryName(driverCtx.aeronDirectoryName()));
+
+      return new ClusteredMediaDriver(driver, archive, consensusModule);
+    } catch (Exception ex) {
+      CloseHelper.quietCloseAll(consensusModule, archive, driver);
+      throw ex;
+    }
   }
 
-  public ShutdownSignalBarrier getBarrier() {
-    return barrier;
-  }
-
-  public int getLeaderId() {
-    return clusterService.getCurrentLeader();
-  }
-
-  public File getClusterDir() {
-    return clusterDir;
+  private AtomicCounter createErrorCounter(
+      Archive.Context archiveContext, MediaDriver.Context driverCtx) {
+    int errorCounterId = SystemCounterDescriptor.ERRORS.id();
+    return archiveContext.errorCounter() != null
+        ? archiveContext.errorCounter()
+        : new AtomicCounter(driverCtx.countersValuesBuffer(), errorCounterId);
   }
 
   @Override
   public void close() {
-    CloseHelper.quietClose(clusteredMediaDriver);
-    CloseHelper.quietClose(clusteredServiceContainer);
-    setActive(false);
+    CloseHelper.closeAll(clusteredMediaDriver, clusteredServiceContainer);
+  }
+
+  record ClusteredMediaDriver(MediaDriver driver, Archive archive, ConsensusModule consensusModule)
+      implements AutoCloseable {
+    @Override
+    public void close() {
+      CloseHelper.closeAll(this.consensusModule, this.archive, this.driver);
+    }
   }
 }

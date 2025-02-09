@@ -1,67 +1,120 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.namnv</groupId>
-    <artifactId>aeron-bank</artifactId>
-    <version>1.0.0</version>
-  </parent>
-  <artifactId>cluster</artifactId>
-  <name>cluster</name>
-  <packaging>jar</packaging>
-  <properties>
-    <mainClass>com.namnv.ClusterMain</mainClass>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>2.0.0</version>
-    </dependency>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.namnv</groupId>
+        <artifactId>aeron-bank</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>cluster</artifactId>
+    <name>cluster</name>
+    <packaging>jar</packaging>
+    <properties>
+        <mainClass>com.namnv.ClusterApplication</mainClass>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.3</version>
+        </dependency>
 
-    <!-- Logback Classic (SLF4J binding) -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.4.6</version>
-    </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+        </dependency>
 
-    <!-- Logback Core -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <version>1.4.6</version>
-    </dependency>
-    <dependency>
-      <groupId>io.aeron</groupId>
-      <artifactId>aeron-all</artifactId>
-      <version>1.41.3</version>
-    </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>6.2.1</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.namnv</groupId>
-      <artifactId>sbe-protocol</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
-    <dependency>
-      <groupId>com.lmax</groupId>
-      <artifactId>disruptor</artifactId>
-      <version>3.3.5</version>
-    </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!-- Logback Classic (SLF4J binding) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.6</version>
+        </dependency>
+
+        <!-- Logback Core -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.4.6</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.aeron</groupId>-->
+        <!--            <artifactId>aeron-all</artifactId>-->
+        <!--            <version>1.47.0</version>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>io.aeron</groupId>
+            <artifactId>aeron-all</artifactId>
+            <version>1.48.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/aeron-all-1.48.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.namnv</groupId>
+            <artifactId>sbe-protocol</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.aeron</groupId>
+            <artifactId>aeron-cluster</artifactId>
+            <version>1.46.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.namnv</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 
 
-  </dependencies>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

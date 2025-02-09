@@ -1,6 +1,5 @@
 package com.namnv.client;
 
-import com.namnv.services.bank.util.Method;
 import io.aeron.Publication;
 import io.aeron.cluster.client.AeronCluster;
 import org.agrona.DirectBuffer;
@@ -44,7 +43,6 @@ public class ClientIngressSender {
     }
 
     public void sendOrderRequestToCluster(final long correlationId, final long fromId, final long todId, final double amount) {
-        LOGGER.info("OrderRequest is being sent to cluster");
         sendMessageToCluster(encoder.encodeOrderRequest(correlationId, fromId, todId, amount), encoder.ORDER_REQUEST_LENGTH);
     }
 }

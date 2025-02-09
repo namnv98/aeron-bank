@@ -1,7 +1,13 @@
 FROM openjdk:17-oracle
 
+# Copy your cluster directory and the script into the container
 COPY cluster/dist/cluster /cluster
 
+# Set the working directory inside the container
 WORKDIR /cluster
 
-CMD ./start-cluster.sh
+# Make sure the start-cluster.sh script is executable
+RUN chmod +x /cluster/start-cluster.sh
+
+# Set the command to run the script when the container starts
+CMD ["./start-cluster.sh"]

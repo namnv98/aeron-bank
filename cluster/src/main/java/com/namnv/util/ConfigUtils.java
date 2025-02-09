@@ -1,35 +1,19 @@
 package com.namnv.util;
 
-import io.aeron.samples.cluster.ClusterConfig;
-import org.agrona.concurrent.SystemEpochClock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.Integer.parseInt;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static java.lang.Integer.parseInt;
+import org.agrona.concurrent.SystemEpochClock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigUtils
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigUtils.class);
-    /**
-     * Read the cluster addresses, port and port offsets to return ingress endpoints
-     *
-     * @return Ingress endpoints
-     */
-    public static String ingressEndpoints(final int maxNodes)
-    {
-        return ClusterConfig.ingressEndpoints(
-                Arrays.asList(
-                        maxNodes != 1 ? getMultiNodeClusterAddresses(maxNodes).split(",") : getClusterAddresses().split(",")),
-                getBasePort(),
-                ClusterConfig.CLIENT_FACING_PORT_OFFSET
-        );
-    }
+
     /**
      * Read the cluster addresses from the environment variable CLUSTER_ADDRESSES or the
      * system property cluster.addresses

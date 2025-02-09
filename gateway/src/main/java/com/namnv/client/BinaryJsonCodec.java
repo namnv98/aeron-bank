@@ -1,8 +1,8 @@
 package com.namnv.client;
 
 
-import com.namnv.services.bank.util.ExecutionResult;
-import com.namnv.services.bank.util.Status;
+import com.namnv.util.ExecutionResult;
+import com.namnv.util.Status;
 import com.weareadaptive.sbe.ExecutionResultDecoder;
 import com.weareadaptive.sbe.SuccessMessageDecoder;
 import com.weareadaptive.sbe.TransferResponseDecoder;

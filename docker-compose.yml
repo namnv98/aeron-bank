@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      PGDATA: /data/postgres
+      POSTGRES_DB: p2pc
+    volumes:
+      - ./postgres:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - internal_bus
+#    restart: unless-stopped
+
   node0:
     build:
       context: .
@@ -100,3 +117,4 @@ networks:
       driver: default
       config:
         - subnet: "172.20.0.0/24"
+

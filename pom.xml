@@ -1,164 +1,166 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.namnv</groupId>
-  <artifactId>aeron-bank</artifactId>
-  <packaging>pom</packaging>
-  <name>aeron bank</name>
-  <version>1.0.0</version>
-  <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.namnv</groupId>
+    <artifactId>aeron-bank</artifactId>
+    <packaging>pom</packaging>
+    <name>aeron bank</name>
+    <version>1.0.0</version>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-    <maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 
-    <lombok.version>1.18.24</lombok.version>
-    <delombok.output>${project.build.directory}/delombok</delombok.output>
+        <lombok.version>1.18.24</lombok.version>
+        <delombok.output>${project.build.directory}/delombok</delombok.output>
 
-    <vertx.version>4.5.5</vertx.version>
-    <guice.version>5.1.0</guice.version>
-    <slf4j.version>1.7.36</slf4j.version>
-    <logstash.gelf.version>1.15.0</logstash.gelf.version>
-    <sentry.log4j2.version>5.7.4</sentry.log4j2.version>
-    <disruptor.version>3.4.4</disruptor.version>
+        <vertx.version>4.5.5</vertx.version>
+        <guice.version>5.1.0</guice.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <logstash.gelf.version>1.15.0</logstash.gelf.version>
+        <sentry.log4j2.version>5.7.4</sentry.log4j2.version>
+        <disruptor.version>3.4.4</disruptor.version>
 
-    <junit5.version>5.8.2</junit5.version>
-    <junit.platform.version>1.8.2</junit.platform.version>
+        <junit5.version>5.8.2</junit5.version>
+        <junit.platform.version>1.8.2</junit.platform.version>
 
-    <project.dist>dist/${project.artifactId}</project.dist>
+        <project.dist>dist/${project.artifactId}</project.dist>
 
-    <release.sbin.start.name>start-${project.artifactId}</release.sbin.start.name>
-    <release.sentry.env>$RELEASE_TARGET</release.sentry.env>
-    <release.vmoptions.xms>512M</release.vmoptions.xms>
-    <release.vmoptions.xmx>512M</release.vmoptions.xmx>
-    <release.vmoptions.log4j2.config>$LOG4J2_CONFIGl</release.vmoptions.log4j2.config>
-    <release.vmoptions.more/>
-  </properties>
-  <modules>
-    <module>sbe-protocol</module>
-    <module>cluster</module>
-    <module>gateway</module>
-  </modules>
+        <release.sbin.start.name>start-${project.artifactId}</release.sbin.start.name>
+        <release.sentry.env>$RELEASE_TARGET</release.sentry.env>
+        <release.vmoptions.xms>512M</release.vmoptions.xms>
+        <release.vmoptions.xmx>512M</release.vmoptions.xmx>
+        <release.vmoptions.log4j2.config>$LOG4J2_CONFIGl</release.vmoptions.log4j2.config>
+        <release.vmoptions.more/>
+    </properties>
+    <modules>
+        <module>sbe-protocol</module>
+        <module>cluster</module>
+        <module>gateway</module>
+        <module>learner</module>
+        <module>core</module>
+    </modules>
 
-  <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.8</version>
-          <configuration>
-            <append>true</append>
-          </configuration>
-          <executions>
-            <execution>
-              <id>prepare-agent</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-report</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.8</version>
+                    <configuration>
+                        <append>true</append>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok-maven-plugin</artifactId>
-                    <versionRange>[1,)</versionRange>
-                    <goals>
-                      <goal>delombok</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.projectlombok</groupId>
+                                        <artifactId>lombok-maven-plugin</artifactId>
+                                        <versionRange>[1,)</versionRange>
+                                        <goals>
+                                            <goal>delombok</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>enforce</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <versionRange>[1.0.0,)</versionRange>
-                    <goals>
-                      <goal>enforce</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.dist}/lib</outputDirectory>
+                                <includeScope>runtime</includeScope>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.3.0</version>
-          <executions>
-            <execution>
-              <id>copy-dependencies</id>
-              <phase>package</phase>
-              <goals>
-                <goal>copy-dependencies</goal>
-              </goals>
-              <configuration>
-                <outputDirectory>${project.dist}/lib</outputDirectory>
-                <includeScope>runtime</includeScope>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <configuration>
+                                <target>
+                                    <delete failonerror="false">
+                                        <fileset dir="${project.dist}"/>
+                                    </delete>
+                                    <copy todir="${project.dist}/lib">
+                                        <fileset dir="${project.build.directory}">
+                                            <exclude name="*-sources.jar"/>
+                                            <exclude name="*-javadoc.jar"/>
+                                            <include name="*.jar"/>
+                                        </fileset>
+                                    </copy>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>3.1.0</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <configuration>
-                <target>
-                  <delete failonerror="false">
-                    <fileset dir="${project.dist}"/>
-                  </delete>
-                  <copy todir="${project.dist}/lib">
-                    <fileset dir="${project.build.directory}">
-                      <exclude name="*-sources.jar"/>
-                      <exclude name="*-javadoc.jar"/>
-                      <include name="*.jar"/>
-                    </fileset>
-                  </copy>
-
-                  <echo file="${project.dist}/banner.txt">${project.artifactId}</echo>
-                  <echo file="${project.dist}/version.txt" append="false">${project.version}</echo>
-                  <echo file="${project.dist}/${project.artifactId}.vmoptions">
-                    <![CDATA[
+                                    <echo file="${project.dist}/banner.txt">${project.artifactId}</echo>
+                                    <echo file="${project.dist}/version.txt" append="false">${project.version}</echo>
+                                    <echo file="${project.dist}/${project.artifactId}.vmoptions">
+                                        <![CDATA[
 --add-modules java.se
 --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
 --add-exports java.base/sun.security.pkcs=ALL-UNNAMED
@@ -169,6 +171,7 @@
 --add-opens java.base/sun.nio.ch=ALL-UNNAMED
 --add-opens java.management/sun.management=ALL-UNNAMED
 --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
 #
 -Dfile.encoding=UTF-8
 -server
@@ -199,10 +202,10 @@
 ${release.vmoptions.more}
 #
 									]]>
-                  </echo>
-                  <!--suppress UnresolvedMavenProperty -->
-                  <echo file="${project.dist}/${release.sbin.start.name}.sh">
-                    <![CDATA[#!/bin/bash
+                                    </echo>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <echo file="${project.dist}/${release.sbin.start.name}.sh">
+                                        <![CDATA[#!/bin/bash
 cat banner.txt
 SELF_ABSOLUTE_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 WORKING_DIR=$(dirname $SELF_ABSOLUTE_PATH)
@@ -240,113 +243,113 @@ LOCAL_CLASSPATH="$WORKING_DIR/*:$WORKING_DIR/lib/*"
 mkdir -p logs
 
 java $JVM_OPTS -cp "$LOCAL_CLASSPATH" -Dworking.dir=$WORKING_DIR $MAIN_CLASS $@]]>
-                  </echo>
-                  <copy file="${project.dist}/${release.sbin.start.name}.sh"
-                        tofile="${project.dist}/${release.sbin.start.name}-background.sh"/>
-                  <echo append="true" file="${project.dist}/${release.sbin.start.name}-background.sh">
-                    <![CDATA[ > /dev/null 2>&1 &]]>
-                  </echo>
-                </target>
-              </configuration>
-              <goals>
-                <goal>run</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven.surefire.plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven.failsafe.plugin.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+                                    </echo>
+                                    <copy file="${project.dist}/${release.sbin.start.name}.sh"
+                                          tofile="${project.dist}/${release.sbin.start.name}-background.sh"/>
+                                    <echo append="true" file="${project.dist}/${release.sbin.start.name}-background.sh">
+                                        <![CDATA[ > /dev/null 2>&1 &]]>
+                                    </echo>
+                                </target>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven.failsafe.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.4.0</version>
-        <configuration>
-          <sourcepath>${delombok.output}</sourcepath>
-        </configuration>
-        <executions>
-          <execution>
-            <id>javadoc-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <!--                            <additionalparam>${javadoc.opts}</additionalparam>-->
-              <!--                            <additionalparam>-Xdoclint:none</additionalparam>-->
-              <additionalOptions>-Xdoclint:none</additionalOptions>
-              <additionalJOption>-Xdoclint:none</additionalJOption>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <sourcepath>${delombok.output}</sourcepath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javadoc-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <!--                            <additionalparam>${javadoc.opts}</additionalparam>-->
+                            <!--                            <additionalparam>-Xdoclint:none</additionalparam>-->
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-      <plugin>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok-maven-plugin</artifactId>
-        <version>1.18.20.0</version>
-        <configuration>
-          <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-          <outputDirectory>${delombok.output}</outputDirectory>
-          <addOutputDirectory>false</addOutputDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <!-- <goal>delombok</goal> -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                    <outputDirectory>${delombok.output}</outputDirectory>
+                    <addOutputDirectory>false</addOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <!-- <goal>delombok</goal> -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

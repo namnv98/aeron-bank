@@ -1,0 +1,18 @@
+FROM openjdk:17-oracle
+
+COPY learner/dist/learner /learner
+
+WORKDIR /learner
+
+CMD ./start-learner.sh
+
+
+FROM openjdk:17-oracle
+
+COPY learner/dist/learner /learner
+
+WORKDIR /learner
+
+RUN chmod +x /learner/start-learner.sh
+
+CMD ["./start-learner.sh"]

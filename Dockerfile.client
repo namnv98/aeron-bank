@@ -5,3 +5,14 @@ COPY gateway/dist/gateway /gateway
 WORKDIR /gateway
 
 CMD ./start-gateway.sh
+
+
+FROM openjdk:17-oracle
+
+COPY gateway/dist/gateway /gateway
+
+WORKDIR /gateway
+
+RUN chmod +x /gateway/start-gateway.sh
+
+CMD ["./start-gateway.sh"]
