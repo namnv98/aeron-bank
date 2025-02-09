@@ -1,3 +1,4 @@
+# Aeron-Bank: High-Performance Distributed Banking System with In-Memory Transactions and Fault Tolerance
 **Aeron-Bank** is a distributed banking system optimized for high transaction write performance, utilizing **Aeron
 Cluster Raft** technology combined with distributed storage methods to ensure consistency and reliability in a
 multi-node environment. By applying the **Raft Consensus** principle, the system maintains data synchronization across
