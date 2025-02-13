@@ -1,25 +1,28 @@
 package com.namnv;
 
-import static com.namnv.util.ConfigUtils.*;
-import static io.aeron.driver.ThreadingMode.DEDICATED;
-import static java.lang.System.setProperty;
-
 import io.aeron.archive.Archive;
 import io.aeron.cluster.ConsensusModule;
 import io.aeron.cluster.service.ClusteredServiceContainer;
 import io.aeron.driver.MediaDriver;
 import io.aeron.driver.status.SystemCounterDescriptor;
 import io.aeron.samples.cluster.ClusterConfig;
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.agrona.CloseHelper;
+import org.agrona.ErrorHandler;
 import org.agrona.concurrent.ShutdownSignalBarrier;
 import org.agrona.concurrent.status.AtomicCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static com.namnv.util.ConfigUtils.*;
+import static io.aeron.cluster.ConsensusModule.Configuration.LOG_CHANNEL_PROP_NAME;
+import static io.aeron.driver.ThreadingMode.DEDICATED;
+import static java.lang.System.setProperty;
 
 @Setter
 @AllArgsConstructor
@@ -78,7 +81,6 @@ public class ClusterNode implements AutoCloseable {
     clusterConfig
         .consensusModuleContext()
         .ingressChannel("aeron:udp")
-        //            .egressChannel(egressChannel())
         .logStreamId(100)
         .deleteDirOnStart(false)
         .sessionTimeoutNs(TimeUnit.MINUTES.toNanos(10))

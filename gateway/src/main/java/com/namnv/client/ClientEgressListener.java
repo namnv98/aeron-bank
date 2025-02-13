@@ -31,7 +31,7 @@ public class ClientEgressListener implements EgressListener {
         messageHeaderDecoder.wrap(buffer, bufferOffset);
         final int typeOfMessage = messageHeaderDecoder.templateId();
         final long correlationId = messageHeaderDecoder.correlationId();
-        LOGGER.info(String.valueOf(correlationId));
+//        LOGGER.info(String.valueOf(correlationId));
         if (allHttopRequest.containsKey(correlationId)) {
             final int actingBlockLength = messageHeaderDecoder.blockLength();
             final int actingVersion = messageHeaderDecoder.version();

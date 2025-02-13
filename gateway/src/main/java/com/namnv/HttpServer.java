@@ -1,7 +1,10 @@
 package com.namnv;
 
+import com.lmax.disruptor.BusySpinWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
+import com.lmax.disruptor.util.DaemonThreadFactory;
 import com.namnv.client.ClientEgressListener;
 import com.namnv.client.ClientIngressSender;
 import com.namnv.lmax.MyEvent;
@@ -22,6 +25,7 @@ public class HttpServer extends AbstractVerticle {
         this.clientEgressListener = clientEgressListener;
     }
 
+
     RingBuffer<MyEvent> ringBuffer;
 
     @Override
@@ -31,10 +35,16 @@ public class HttpServer extends AbstractVerticle {
         MyEventFactory factory = new MyEventFactory();
 
         // Set up the ring buffer size (must be a power of 2)
-        int bufferSize = 2048;
+        int bufferSize = 1 << 16;
 
         // Create the disruptor
-        Disruptor<MyEvent> disruptor = new Disruptor<>(factory, bufferSize, Executors.defaultThreadFactory());
+        Disruptor<MyEvent> disruptor =
+        new Disruptor<>(
+            factory,
+            bufferSize,
+            DaemonThreadFactory.INSTANCE,
+            ProducerType.MULTI,
+            new BusySpinWaitStrategy());
 
         // Create the event handler
         MyEventHandler handler = new MyEventHandler(clientIngressSender, clientEgressListener);

@@ -41,6 +41,7 @@
     <modules>
         <module>sbe-protocol</module>
         <module>cluster</module>
+        <module>cluster-local</module>
         <module>gateway</module>
         <module>learner</module>
         <module>core</module>

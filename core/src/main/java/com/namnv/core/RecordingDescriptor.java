@@ -1,4 +1,4 @@
-package com.namnv.learner.replay;
+package com.namnv.core;
 
 public class RecordingDescriptor {
 

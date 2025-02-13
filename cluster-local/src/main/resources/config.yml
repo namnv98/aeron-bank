@@ -1,0 +1,4 @@
+database:
+  url: jdbc:postgresql://localhost:5432/p2pc
+  username: admin
+  password: admin

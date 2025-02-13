@@ -3,6 +3,7 @@ package com.namnv.learner.replay;
 import static io.aeron.CommonContext.MDC_CONTROL_MODE_MANUAL;
 import static io.aeron.CommonContext.UDP_MEDIA;
 
+import com.namnv.core.RecordingDescriptor;
 import io.aeron.cluster.codecs.MessageHeaderDecoder;
 import io.aeron.*;
 import io.aeron.archive.client.AeronArchive;
