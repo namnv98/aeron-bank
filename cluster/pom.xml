@@ -10,7 +10,7 @@
     <name>cluster</name>
     <packaging>jar</packaging>
     <properties>
-        <mainClass>com.namnv.ClusterApplicationLocal</mainClass>
+        <mainClass>com.namnv.node.ClusterApplicationLocal</mainClass>
     </properties>
     <dependencies>
         <dependency>

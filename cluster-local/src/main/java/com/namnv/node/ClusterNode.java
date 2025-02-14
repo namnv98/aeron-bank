@@ -1,5 +1,6 @@
-package com.namnv;
+package com.namnv.node;
 
+import com.namnv.ClusterService;
 import io.aeron.archive.Archive;
 import io.aeron.cluster.ConsensusModule;
 import io.aeron.cluster.service.ClusteredServiceContainer;
@@ -9,7 +10,6 @@ import io.aeron.samples.cluster.ClusterConfig;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.agrona.CloseHelper;
-import org.agrona.ErrorHandler;
 import org.agrona.concurrent.ShutdownSignalBarrier;
 import org.agrona.concurrent.status.AtomicCounter;
 import org.slf4j.Logger;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.namnv.util.ConfigUtils.*;
-import static io.aeron.cluster.ConsensusModule.Configuration.LOG_CHANNEL_PROP_NAME;
 import static io.aeron.driver.ThreadingMode.DEDICATED;
 import static java.lang.System.setProperty;
 

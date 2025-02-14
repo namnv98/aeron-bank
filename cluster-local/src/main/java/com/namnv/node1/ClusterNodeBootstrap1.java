@@ -1,4 +1,4 @@
-package com.namnv;
+package com.namnv.node1;
 
 import com.namnv.config.ApplicationConfig;
 import com.namnv.core.model.ClusterStatus;
@@ -9,10 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ClusterNodeBootstrap implements com.namnv.core.ClusterBootstrap {
+public class ClusterNodeBootstrap1 implements com.namnv.core.ClusterBootstrap {
   private final StateMachineManager stateMachineManager;
   private final Balances balances;
-  private final ClusterNode clusterNode;
+  private final ClusterNode1 clusterNode;
   private final ApplicationConfig applicationConfig;
 
   @Override

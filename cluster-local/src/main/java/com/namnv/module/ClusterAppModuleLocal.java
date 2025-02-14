@@ -5,7 +5,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.lmax.disruptor.BusySpinWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
-import com.namnv.ClusterNodeBootstrap;
+import com.namnv.node.ClusterNodeBootstrap;
 import com.namnv.ClusterService;
 import com.namnv.command.disruptor.RequestDisruptorDSL;
 import com.namnv.command.disruptor.event.RequestEvent;
@@ -20,11 +20,10 @@ import com.namnv.command.handler.CommandHandlerImpl;
 import com.namnv.config.ApplicationConfig;
 import com.namnv.core.ClusterBootstrap;
 import com.namnv.core.repository.BalanceRepository;
-import com.namnv.core.repository.BalanceRepositoryImpl;
 import com.namnv.core.repository.Balances;
 import com.namnv.core.state.StateMachineManager;
 import com.namnv.core.state.StateMachineManagerImpl;
-import com.namnv.ClusterNode;
+import com.namnv.node.ClusterNode;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
